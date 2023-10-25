@@ -29,7 +29,7 @@ def game():
             print("Illegal move: " + str(move))
             break
         print(board)
-        time.sleep(2)
+        time.sleep(1)
 
         board.push(move)
 
@@ -45,9 +45,9 @@ def game():
     elif board.is_insufficient_material():
         print("The game is a draw due to insufficient material")
     elif board.halfmove_clock >= 100 and any(board.generate_legal_moves()):
-        print("The game is a draw due to the 75-move rule")
+        print("The game is a draw due to the 50-move rule")
     elif board.is_repetition(3):
-        print("The game is a draw due to fivefold repetition")
+        print("The game is a draw due to threfold repetition")
     else:
         print("Unsure of reason of end to game")
 
