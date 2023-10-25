@@ -1,15 +1,16 @@
 import chess
 import importlib.util
+import time
 
 
 def game():
     # Get bots
-    spec1 = importlib.util.spec_from_file_location("bot1", "/src/bot1/search.py")
+    spec1 = importlib.util.spec_from_file_location("bot1", "src/bot1/search.py")
     bot1_module = importlib.util.module_from_spec(spec1)
     spec1.loader.exec_module(bot1_module)
     bot1 = bot1_module.Bot()
 
-    spec2 = importlib.util.spec_from_file_location("bot2", "/src/bot2/search.py")
+    spec2 = importlib.util.spec_from_file_location("bot2", "src/bot2/search.py")
     bot2_module = importlib.util.module_from_spec(spec2)
     spec2.loader.exec_module(bot2_module)
     bot2 = bot2_module.Bot()
@@ -27,6 +28,8 @@ def game():
         if move not in board.legal_moves:
             print("Illegal move: " + str(move))
             break
+        print(board)
+        time.sleep(2)
 
         board.push(move)
 
@@ -41,12 +44,12 @@ def game():
         print("The game is a draw due to stalemate")
     elif board.is_insufficient_material():
         print("The game is a draw due to insufficient material")
-    elif board.is_seventyfive_moves():
+    elif board.halfmove_clock >= 100 and any(board.generate_legal_moves()):
         print("The game is a draw due to the 75-move rule")
-    elif board.is_fivefold_repetition():
+    elif board.is_repetition(3):
         print("The game is a draw due to fivefold repetition")
-    elif board.is_variant_draw():
-        print("The game is a draw due to variant-specific rules")
+    else:
+        print("Unsure of reason of end to game")
 
 if __name__ == "__main__":
     game()
