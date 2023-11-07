@@ -1,6 +1,12 @@
 import chess
 import random
-from evaluate import evaluate
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+import evaluate
+
+
 
 CHECKMATE_SCORE = 1000000
 
@@ -29,7 +35,7 @@ class Bot:
             return 0
 
         if depth <= 0:
-            return evaluate(self.board)
+            return evaluate.evaluate(self.board)
 
         moves = list(self.board.legal_moves)
 
@@ -38,6 +44,8 @@ class Bot:
             score = -self.search(depth-1, ply+1, -beta, -alpha)
             self.board.pop()
 
+            # if ply == 0:
+            #     print(move, score)
             if score >= beta:
                 return beta
             if score > alpha:
