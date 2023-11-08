@@ -21,7 +21,7 @@ class Bot:
         legal_moves = list(self.board.legal_moves)
         pvmove = random.choice(legal_moves)
 
-        self.search(2, 0, -CHECKMATE_SCORE, CHECKMATE_SCORE)
+        self.search(1, 0, -CHECKMATE_SCORE, CHECKMATE_SCORE)
         return pvmove 
     
     def is_draw(self):
@@ -35,7 +35,7 @@ class Bot:
             return 0
 
         if depth <= 0:
-            return evaluate.evaluate(self.board)
+            return evaluate.evaluate(self.board) * (-1 if self.board.turn else 1)
 
         moves = list(self.board.legal_moves)
 
