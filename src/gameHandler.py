@@ -1,7 +1,7 @@
 import chess
 import importlib.util
 import time
-import basicBot
+import visualizeBoard
 
 
 def game():
@@ -18,7 +18,7 @@ def game():
 
     board = chess.Board()
     board.set_fen("8/8/8/4n3/2k5/7r/3K1B2/BB6 w - - 0 1")
-    basicBot.draw_board(board)
+    visualizeBoard.draw_board(board)
 
     # Play the game
     while not board.is_game_over():
