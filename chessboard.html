@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chess Game</title>
+</head>
+<body>
+    {{ board }}
+    <form method="post" action="/make_move">
+        <input type="text" name="move" placeholder="Next move (e.g., 'e2 e4')" required>
+        <input type="submit" value="Submit Move">
+    </form>
+</body>
+</html>
