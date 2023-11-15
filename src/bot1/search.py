@@ -19,10 +19,10 @@ class Bot:
         self.board = board
 
         legal_moves = list(self.board.legal_moves)
-        pvmove = random.choice(legal_moves)
+        self.pvmove = random.choice(legal_moves)
 
-        self.search(1, 0, -CHECKMATE_SCORE, CHECKMATE_SCORE)
-        return pvmove 
+        self.search(1, 0, -CHECKMATE_SCORE-1, CHECKMATE_SCORE+1)
+        return self.pvmove 
     
     def is_draw(self):
         return self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_repetition(3)
@@ -30,12 +30,12 @@ class Bot:
 
     def search(self, depth, ply, alpha, beta):
         if self.board.is_checkmate():
-            return CHECKMATE_SCORE
+            return -CHECKMATE_SCORE
         if self.is_draw():
             return 0
 
         if depth <= 0:
-            return evaluate.evaluate(self.board) * (-1 if self.board.turn else 1)
+            return evaluate.evaluate(self.board) * (1 if self.board.turn else -1)
 
         moves = list(self.board.legal_moves)
 
@@ -46,10 +46,12 @@ class Bot:
 
             # if ply == 0:
             #     print(move, score)
+            print(move, score)
             if score >= beta:
                 return beta
             if score > alpha:
                 alpha = score
                 if ply == 0: self.pvmove = move
+                print(ply, self.pvmove)
 
         return alpha
