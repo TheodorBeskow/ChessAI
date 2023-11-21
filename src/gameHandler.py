@@ -16,7 +16,7 @@ def game():
     bot2 = bot2_module.Bot()
 
     board = chess.Board()
-    board.set_fen("3k4/8/3K2Q1/8/8/8/8/8 w - - 0 1")
+    # board.set_fen("8/6k1/8/3r4/8/3R4/8/K7 w - - 0 1")
 
     # Play the game
     while not board.is_game_over():
@@ -26,13 +26,15 @@ def game():
             move = bot2.choose_move(board)
 
         # Check if the move is legal
-        if move not in board.legal_moves:
+        if move not in list(board.legal_moves):
             print("Illegal move: " + str(move))
             break
-        print(board)
         time.sleep(1)
 
+        print(board)
+        print("----------")
         board.push(move)
+        print(board)
 
 
     # Print the result of the game

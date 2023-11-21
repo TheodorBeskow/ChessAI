@@ -1,11 +1,12 @@
 import chess
 
 piece_values = {
-    chess.PAWN: 1,
-    chess.KNIGHT: 3,
-    chess.BISHOP: 3,
-    chess.ROOK: 5,
-    chess.QUEEN: 9,
+    chess.PAWN: 100,
+    chess.KNIGHT: 300,
+    chess.BISHOP: 300,
+    chess.ROOK: 500,
+    chess.QUEEN: 900,
+    chess.KING: 0,
 }
 
 piece_square_tables = {
@@ -75,7 +76,10 @@ def evaluate(board):
     white_value = 0
     black_value = 0
     for piece_type in piece_values.keys():
-        white_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[square] for square in board.pieces(piece_type, chess.WHITE))
-        black_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[63-square] for square in board.pieces(piece_type, chess.BLACK))
+        # for square in board.pieces(piece_type, chess.BLACK):
+        #     print(square, piece_type)
+        #     print(piece_square_tables.get(board.piece_at(square).piece_type)[square])
+        white_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[63-square] for square in board.pieces(piece_type, chess.WHITE))
+        black_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[square] for square in board.pieces(piece_type, chess.BLACK))
 
     return white_value - black_value
