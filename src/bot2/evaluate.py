@@ -7,7 +7,7 @@ piece_values = {
     chess.ROOK: 500,
     chess.QUEEN: 900,
     chess.KING: 0,
-}  
+}
 
 piece_square_tables = {
     chess.PAWN: [
