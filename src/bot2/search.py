@@ -41,7 +41,7 @@ class Bot:
             self.search(depth, 0, -CHECKMATE_SCORE-1, CHECKMATE_SCORE+1)
             if self.timeLimit(): break
             # print(self.pvmove)
-            print(depth)
+            # print(depth)
             bestmove = self.pvmove
 
         return bestmove 
