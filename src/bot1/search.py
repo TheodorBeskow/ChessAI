@@ -44,9 +44,8 @@ class Bot:
 
         for depth in range(1, 100):
             self.search(depth, 0, -CHECKMATE_SCORE-1, CHECKMATE_SCORE+1)
-            if self.timeLimit(): break
             bestmove = self.pvmove
-            print("gap")
+            if self.timeLimit(): break
         print(depth)
 
         return bestmove 
@@ -76,8 +75,8 @@ class Bot:
             self.board.pop()
 
             if self.timeLimit(): return 0
-            if ply == 0 : 
-                print(move)
+            # if ply == 0 : 
+            #     print(move)
 
             if score >= beta:
                 return beta
@@ -92,7 +91,7 @@ class Bot:
 
 
     def score_move(self, move, bestMove):
-        moveScore = 0
+        moveScore = evaluate.piece_square_tables.get(self.board.piece_at(move.from_square).piece_type)[63-move.to_square if self.board.turn else move.to_square]-evaluate.piece_square_tables.get(self.board.piece_at(move.from_square).piece_type)[63-move.from_square if self.board.turn else move.from_square]
         if move == bestMove: 
             moveScore += 10000
         if self.board.is_capture(move):
