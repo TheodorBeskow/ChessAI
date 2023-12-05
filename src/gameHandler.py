@@ -1,7 +1,6 @@
 import chess
 import importlib.util
 import time
-import visualizeBoard
 
 
 def game():
@@ -17,8 +16,7 @@ def game():
     bot2 = bot2_module.Bot()
 
     board = chess.Board()
-    board.set_fen("8/8/8/4n3/2k5/7r/3K1B2/BB6 w - - 0 1")
-    visualizeBoard.draw_board(board)
+    # board.set_fen("8/6k1/8/3r4/8/3R4/8/K7 w - - 0 1")
 
     # Play the game
     while not board.is_game_over():
@@ -28,13 +26,15 @@ def game():
             move = bot2.choose_move(board)
 
         # Check if the move is legal
-        if move not in board.legal_moves:
+        if move not in list(board.legal_moves):
             print("Illegal move: " + str(move))
             break
-        print(board)
         time.sleep(1)
 
+        print(board)
+        print("----------")
         board.push(move)
+        print(board)
 
 
     # Print the result of the game
