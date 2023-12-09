@@ -10,12 +10,12 @@ def convert_to_rating(moves, is_black):
     
     if moves.startswith('-'):
         mate_in_moves = abs(int(moves))
-        rating = -1 + mate_in_moves * 0.04  
-        return max(-1, min(-0.7, rating))  
+        rating = -1 + mate_in_moves * 0.06  
+        return max(-1, min(-0.5, rating))  
     else:
         mate_in_moves = int(moves)
-        rating = 1 - mate_in_moves * 0.04  
-        return min(1, max(0.7, rating))  
+        rating = 1 - mate_in_moves * 0.06  
+        return min(1, max(0.5, rating))  
 
 
 def normalize(score):
