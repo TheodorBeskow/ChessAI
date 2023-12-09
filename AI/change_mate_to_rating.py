@@ -6,22 +6,31 @@ def is_mate(fen):
 
 
 def convert_to_rating(moves, is_black):
-    base_rating = 10000
+    base_rating = 1
     
     if moves.startswith('-'):
         mate_in_moves = abs(int(moves))
-        rating = -10000 + mate_in_moves * 300  # Adjust the rating for black's mate-in-# moves
-        return max(-10000, min(-2000, rating))  # Cap the rating for black's mate-in-# between -10000 and -2000
+        rating = -1 + mate_in_moves * 0.04  
+        return max(-1, min(-0.7, rating))  
     else:
         mate_in_moves = int(moves)
-        rating = 10000 - mate_in_moves * 300  # Adjust the rating for white's mate-in-# moves
-        return min(10000, max(2000, rating))  # Cap the rating for white's mate-in-# between 10000 and 2000
+        rating = 1 - mate_in_moves * 0.04  
+        return min(1, max(0.7, rating))  
+
+
+def normalize(score):
+    value = score / 10000
+    value/=2
+    
+    if value >= 0:
+        return str(pow(value, 0.6))
+    else:
+        return str(-pow(abs(value), 0.6))
 
 
 
-
-input_file = 'AI\output_folder\output_1.txt'
-output_file = 'AI\processed_data\output_1.txt'
+input_file = r'AI\fen_ratings2.txt'
+output_file = r'AI\fen_ratingsomate2.txt'
 with open(input_file, 'r') as file:
     lines = file.readlines()
 
@@ -31,10 +40,15 @@ for line in lines:
     if is_mate(fen_row):
         moves = fen_row.split()[-1][1:]  # Extract number of moves from mate symbol
         is_black = fen_row.split()[-1].startswith('-')
-        rating = convert_to_rating(moves, is_black)/100
+        rating = convert_to_rating(moves, is_black)
         parts = fen_row.split()
-        parts[-1] = f'{rating}'  # Replace mate symbol with the adjusted rating
+        parts[-1] = f'{rating}'  
         fen_row = ' '.join(parts)
+    else:
+        temp = fen_row.split()[:-1]
+        temp.append(normalize(float(fen_row.split()[-1])))
+        fen_row = ' '.join(temp)
+        # print(fen_row.split()[-1])
     output_lines.append(fen_row + '\n')
 
 print(f"Total lines in the input file: {len(lines)}")
