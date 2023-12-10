@@ -19,7 +19,7 @@ def convert_to_rating(moves, is_black):
 
 
 def normalize(score):
-    value = score / 10000
+    value = score / 100
     value/=2
     
     if value >= 0:
@@ -29,8 +29,8 @@ def normalize(score):
 
 
 
-input_file = r'AI\fen_ratings2.txt'
-output_file = r'AI\fen_ratingsomate2.txt'
+input_file = r'AI\output_folder\output_1.txt'
+output_file = r'AI\processed_data\output_1.txt'
 with open(input_file, 'r') as file:
     lines = file.readlines()
 
@@ -39,10 +39,12 @@ counting = 0
 output_lines = []
 for line in lines:
     fen_row = line.strip()
-    if fen_row in fen_exists:
+    realFen = ' '.join(fen_row.split()[:-1])
+    if realFen in fen_exists:
         counting+=1
+        # continue
     else:
-        fen_exists.add(fen_row)
+        fen_exists.add(realFen)
     if is_mate(fen_row):
         moves = fen_row.split()[-1][1:]  # Extract number of moves from mate symbol
         is_black = fen_row.split()[-1].startswith('-')
@@ -57,7 +59,7 @@ for line in lines:
         # print(fen_row.split()[-1])
     output_lines.append(fen_row + '\n')
 
-print(counting)
+print(f"Total duplicate FENs: {counting}")
 print(f"Total lines in the input file: {len(lines)}")
 print(f"Total lines in the output: {len(output_lines)}")
 
