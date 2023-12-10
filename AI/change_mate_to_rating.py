@@ -34,9 +34,15 @@ output_file = r'AI\fen_ratingsomate2.txt'
 with open(input_file, 'r') as file:
     lines = file.readlines()
 
+fen_exists = set()
+counting = 0
 output_lines = []
 for line in lines:
     fen_row = line.strip()
+    if fen_row in fen_exists:
+        counting+=1
+    else:
+        fen_exists.add(fen_row)
     if is_mate(fen_row):
         moves = fen_row.split()[-1][1:]  # Extract number of moves from mate symbol
         is_black = fen_row.split()[-1].startswith('-')
@@ -51,6 +57,7 @@ for line in lines:
         # print(fen_row.split()[-1])
     output_lines.append(fen_row + '\n')
 
+print(counting)
 print(f"Total lines in the input file: {len(lines)}")
 print(f"Total lines in the output: {len(output_lines)}")
 
