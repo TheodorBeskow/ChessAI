@@ -7,8 +7,8 @@ def count_lines(file_path):
         return sum(1 for _ in file)
 
 # File paths
-positions_file = "AI/positions.txt"
-ratings_file = "AI/fen_ratings.txt"
+positions_file = "AI/positions2.txt"
+ratings_file = "AI/fen_ratings2.txt"
 
 # Read already processed lines in the ratings file
 processed_rows = count_lines(ratings_file)
@@ -40,7 +40,7 @@ with open(ratings_file, "a") as output_file:
             eval_info["score"].relative = -eval_info["score"].relative
 
         # Append evaluation score to the output line
-        output_line += " " + str(eval_info["score"]) + "\n"
+        output_line += " " + str(eval_info["score"].relative) + "\n"
 
         # Write the FEN string and its evaluation to the file
         output_file.write(output_line)
