@@ -1,85 +1,51 @@
 import chess
+import numpy as np
+import time
+import os
 
-piece_values = {
-    chess.PAWN: 100,
-    chess.KNIGHT: 300,
-    chess.BISHOP: 300,
-    chess.ROOK: 500,
-    chess.QUEEN: 900,
-    chess.KING: 0,
-}  
 
-piece_square_tables = {
-    chess.PAWN: [
-        0,   0,   0,   0,   0,   0,   0,   0,
-        50,  50,  50,  50,  50,  50,  50,  50,
-        10,  10,  20,  30,  30,  20,  10,  10,
-        5,   5,  10,  25,  25,  10,   5,   5,
-        0,   0,   0,  20,  20,   0,   0,   0,
-        5,  -5, -10,   0,   0, -10,  -5,   5,
-        5,  10,  10, -20, -20,  10,  10,   5,
-        0,   0,   0,   0,   0,   0,   0,   0
-    ],
-    chess.KNIGHT: [
-        -50,-40,-30,-30,-30,-30,-40,-50,
-        -40,-20,  0,  0,  0,  0,-20,-40,
-        -30,  0, 10, 15, 15, 10,  0,-30,
-        -30,  5, 15, 20, 20, 15,  5,-30,
-        -30,  0, 15, 20, 20, 15,  0,-30,
-        -30,  5, 10, 15, 15, 10,  5,-30,
-        -40,-20,  0,  5,  5,  0,-20,-40,
-        -50,-40,-30,-30,-30,-30,-40,-50,
-    ],
-    chess.BISHOP: [
-        -20,-10,-10,-10,-10,-10,-10,-20,
-        -10,  0,  0,  0,  0,  0,  0,-10,
-        -10,  0,  5, 10, 10,  5,  0,-10,
-        -10,  5,  5, 10, 10,  5,  5,-10,
-        -10,  0, 10, 10, 10, 10,  0,-10,
-        -10, 10, 10, 10, 10, 10, 10,-10,
-        -10,  5,  0,  0,  0,  0,  5,-10,
-        -20,-10,-10,-10,-10,-10,-10,-20,
-    ],
-    chess.ROOK: [
-        0,  0,  0,  0,  0,  0,  0,  0,
-        5, 10, 10, 10, 10, 10, 10,  5,
-        -5,  0,  0,  0,  0,  0,  0, -5,
-        -5,  0,  0,  0,  0,  0,  0, -5,
-        -5,  0,  0,  0,  0,  0,  0, -5,
-        -5,  0,  0,  0,  0,  0,  0, -5,
-        -5,  0,  0,  0,  0,  0,  0, -5,
-        0,  0,  0,  5,  5,  0,  0,  0
-    ],
-    chess.QUEEN: [
-        -20,-10,-10, -5, -5,-10,-10,-20,
-        -10,  0,  0,  0,  0,  0,  0,-10,
-        -10,  0,  5,  5,  5,  5,  0,-10,
-        -5,  0,  5,  5,  5,  5,  0, -5,
-        0,  0,  5,  5,  5,  5,  0, -5,
-        -10,  5,  5,  5,  5,  5,  0,-10,
-        -10,  0,  5,  0,  0,  0,  0,-10,
-        -20,-10,-10, -5, -5,-10,-10,-20
-    ],
-    chess.KING: [
-         -80, -70, -70, -70, -70, -70, -70, -80, 
-         -60, -60, -60, -60, -60, -60, -60, -60, 
-         -40, -50, -50, -60, -60, -50, -50, -40, 
-         -30, -40, -40, -50, -50, -40, -40, -30, 
-         -20, -30, -30, -40, -40, -30, -30, -20, 
-         -10, -20, -20, -20, -20, -20, -20, -10, 
-         20, 20, -5, -5, -5, -5, 20, 20, 
-         20, 30, 10, 0, 0, 10, 30, 20 
-    ],
-}
+def fen_to_board(fen):
+    # Parse the FEN string
+    parts = fen.split(" ")
+    isWhite = parts[1] == 'w'
 
-def evaluate(board):
-    white_value = 0
-    black_value = 0
-    for piece_type in piece_values.keys():
-        # for square in board.pieces(piece_type, chess.BLACK):
-        #     print(square, piece_type)
-        #     print(piece_square_tables.get(board.piece_at(square).piece_type)[square])
-        white_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[63-square] for square in board.pieces(piece_type, chess.WHITE))
-        black_value += sum(piece_values.get(board.piece_at(square).piece_type) + piece_square_tables.get(board.piece_at(square).piece_type)[square] for square in board.pieces(piece_type, chess.BLACK))
+    # Create a chess board
+    board = chess.Board(fen)
 
-    return white_value - black_value
+    # Convert the board position to a binary matrix
+    binary_board = np.zeros((8, 8, 6), dtype=np.float32)
+    piece_amount = np.zeros((12), dtype=np.float32)
+    pieces = {'p': [0, 1.0], 'r': [1, 1.0], 'n': [2, 1.0], 'b': [3, 1.0], 'q': [4, 1.0], 'k': [5, 1.0],
+              'P': [0, -1.0], 'R': [1, -1.0], 'N': [2, -1.0], 'B': [3, -1.0], 'Q': [4, -1.0], 'K': [5, -1.0]}
+
+    for i in range(64):
+        piece = board.piece_at(i)
+        if piece:
+            if isWhite:
+                binary_board[i // 8, i % 8, pieces[str(piece)][0]] = pieces[str(piece)][1]
+            else:
+                binary_board[7-(i // 8), 7-(i % 8), pieces[str(piece)][0]] = -pieces[str(piece)][1]
+            if isWhite ^ (pieces[str(piece)][1] < 0):
+                piece_amount[pieces[str(piece)][0]] += 1
+            else:
+                piece_amount[pieces[str(piece)][0]+6] += 1
+
+    return [binary_board, piece_amount]
+
+
+def evaluate(model, fens):
+    startTime = time.time()
+    binary_boards = []
+    piece_amounts = []
+
+    for fen in fens:
+        binary_board, piece_amount = fen_to_board(fen)
+        binary_boards.append(binary_board)
+        piece_amounts.append(piece_amount)
+
+    binary_boards = np.array(binary_boards)
+    piece_amounts = np.array(piece_amounts)
+
+    res = model.predict([binary_boards, piece_amounts], verbose=1)
+    # print(time.time()-startTime, 5)
+    return res

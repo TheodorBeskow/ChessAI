@@ -19,6 +19,7 @@ bot1 = bot1_module.Bot()
 
 board = chess.Board()
 
+
 @app.route('/', methods =['GET', 'POST'])
 def index():
     html = '''<html>
@@ -118,9 +119,11 @@ def move():
 @app.route('/reset', methods = ["POST"])
 def reset():
     board.reset()
+    # board.set_fen("8/2k5/8/8/8/8/5Q2/3KQ3 w - - 0 1")
     return ""
 
 @app.route('/play', methods = ["GET", "POST"])
+
 def play():
     mov = request.form.get('mov')
     # if mov not in list(board.legal_moves):
