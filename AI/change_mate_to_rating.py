@@ -19,7 +19,7 @@ def convert_to_rating(moves, is_black):
 
 
 def normalize(score):
-    value = score / 100
+    value = score / 10000
     value/=2
     
     if value >= 0:
@@ -29,8 +29,8 @@ def normalize(score):
 
 
 
-input_file = r'AI\output_folder\output_1.txt'
-output_file = r'AI\processed_data\output_1.txt'
+input_file = r'AI\BotData.txt'
+output_file = r'AI\ProcessedBotData.txt'
 with open(input_file, 'r') as file:
     lines = file.readlines()
 

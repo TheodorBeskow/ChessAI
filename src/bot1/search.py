@@ -61,7 +61,7 @@ class Bot:
             self.evaluatedFens[fens_list[i]] = scores[i][0]
         # print(time.time()-self.startTime, 3)
         score = self.search(1, 0, False)
-        # print(time.time()-self.startTime, score)
+        print(time.time()-self.startTime, score)
 
 
 
@@ -72,7 +72,7 @@ class Bot:
         #     if self.timeLimit(): break
         # print(depth)
 
-        return bestmove 
+        return self.pvmove 
     
     def is_draw(self):
         return self.board.is_stalemate() or self.board.is_insufficient_material() or self.board.is_repetition(3)
