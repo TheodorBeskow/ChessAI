@@ -7,7 +7,7 @@ import requests
 
 app = Flask(__name__)
 
-spec1 = importlib.util.spec_from_file_location("bot1", "src/bot1/search.py")
+spec1 = importlib.util.spec_from_file_location("bot1", "src/smallModelBot/search.py")
 bot1_module = importlib.util.module_from_spec(spec1)
 spec1.loader.exec_module(bot1_module)
 bot1 = bot1_module.Bot()
