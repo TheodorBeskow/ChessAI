@@ -5,6 +5,7 @@ import random
 import importlib.util
 import requests
 
+
 app = Flask(__name__)
 
 spec1 = importlib.util.spec_from_file_location("bot1", "src/smallModelBot/search.py")
@@ -119,7 +120,7 @@ def move():
 @app.route('/reset', methods = ["POST"])
 def reset():
     board.reset()
-    # board.set_fen("8/8/8/8/5K1k/8/6Q1/8 w - - 0 1")
+    board.set_fen("8/8/4k3/8/8/3Q3q/3K4/8 w - - 0 1")
     return ""
 
 @app.route('/play', methods = ["GET", "POST"])

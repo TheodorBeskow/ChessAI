@@ -4,10 +4,6 @@ import time
 import sys
 import os
 import tensorflow as tf
-from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import disable_interactive_logging
-from tensorflow.keras.utils import get_custom_objects
-disable_interactive_logging()
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 import smallModelBot.evaluate_s as evaluate
@@ -28,17 +24,13 @@ piece_values = {
 tt = TranspositionTable()
 zob = ZobristHash()
 
-def squared_clipped_relu(x):
-    return tf.keras.activations.relu(x, max_value=1)**2
-
-get_custom_objects().update({'squared_clipped_relu': squared_clipped_relu})
 
 class Bot:
     def __init__(self):
         self.board = chess.Board()
         self.pvmove = chess.Move.null
         self.allocatedTime = 0
-        self.evalModel = load_model(r"AI\TrainedModel.keras")
+        self.c = 0
 
 
     def timeLimit(self):
@@ -51,13 +43,14 @@ class Bot:
 
         legal_moves = list(self.board.legal_moves)
         self.pvmove = random.choice(legal_moves)
-        self.allocatedTime = time.time()+1
+        self.allocatedTime = time.time()+5
 
-
+        self.c = 0
         for depth in range(1, 100):
             self.search(depth, 0, -CHECKMATE_SCORE-1, CHECKMATE_SCORE+1)
             if self.timeLimit(): break
-        print(depth)
+        print(depth, self.c)
+
 
         return self.pvmove 
     
@@ -72,7 +65,8 @@ class Bot:
             return 0
 
         if depth <= 0:
-            return evaluate.evaluate(self.evalModel, self.board.fen())
+            self.c+=1
+            return evaluate.evaluate(self.board.fen())
 
         ttMove = "blabla"
         # ttMove = tt.lookup(zob.compute_hash(self.board), depth)
@@ -85,9 +79,9 @@ class Bot:
             score = -self.search(depth-1, ply+1, -beta, -alpha)
             self.board.pop()
 
-            # if self.timeLimit(): return 0
-            # if ply == 0 and not evaluates: 
-            #     print(move, score)
+            if self.timeLimit(): return 0
+            if ply == 0: 
+                print(move, score)
 
             if score > alpha:
                 alpha = score
@@ -103,7 +97,6 @@ class Bot:
 
     def score_move(self, move, bestMove):
         moveScore = 0
-        # moveScore = evaluate.piece_square_tables.get(self.board.piece_at(move.from_square).piece_type)[63-move.to_square if self.board.turn else move.to_square]-evaluate.piece_square_tables.get(self.board.piece_at(move.from_square).piece_type)[63-move.from_square if self.board.turn else move.from_square]
         if move == bestMove: 
             moveScore += 10000
         if self.board.is_capture(move):

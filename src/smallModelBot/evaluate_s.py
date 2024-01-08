@@ -2,6 +2,10 @@ import chess
 import numpy as np
 import time
 import os
+import tensorflow as tf
+from keras.models import load_model
+from keras.utils import disable_interactive_logging
+from keras.utils import get_custom_objects
 
 
 def fen_to_board(fen):
@@ -34,10 +38,25 @@ def fen_to_board(fen):
     return binary_board
 
 
-def evaluate(model, fen):
+def squared_clipped_relu(x):
+    return tf.keras.activations.relu(x, max_value=1)**2
 
+tf.compat.v1.disable_eager_execution()
+disable_interactive_logging()
+get_custom_objects().update({'squared_clipped_relu': squared_clipped_relu})
+
+graph = tf.Graph()
+with graph.as_default():
+    session = tf.compat.v1.Session()
+    with session.as_default():
+        model = load_model(r"AI\TrainedModel.keras", custom_objects={'squared_clipped_relu': squared_clipped_relu})
+
+def evaluate(fen):
     binary_board = np.array(fen_to_board(fen))
     binary_board = np.expand_dims(binary_board, axis=0)
 
-    res = model.predict(binary_board, verbose=1)
-    return res
+    with graph.as_default():
+        with session.as_default():
+            res = model.predict(binary_board, verbose=1)
+
+    return res[0][0]
