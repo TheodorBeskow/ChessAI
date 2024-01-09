@@ -43,7 +43,7 @@ class Bot:
 
         legal_moves = list(self.board.legal_moves)
         self.pvmove = random.choice(legal_moves)
-        self.allocatedTime = time.time()+5
+        self.allocatedTime = time.time()+1
 
         self.c = 0
         for depth in range(1, 100):
@@ -80,8 +80,8 @@ class Bot:
             self.board.pop()
 
             if self.timeLimit(): return 0
-            if ply == 0: 
-                print(move, score)
+            # if ply == 0: 
+            #     print(move, score)
 
             if score > alpha:
                 alpha = score

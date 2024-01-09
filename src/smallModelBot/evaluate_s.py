@@ -37,19 +37,29 @@ def fen_to_board(fen):
 
     return binary_board
 
+import tensorflow as tf
+from keras.models import load_model
+from keras.utils import get_custom_objects
 
 def squared_clipped_relu(x):
     return tf.keras.activations.relu(x, max_value=1)**2
 
 tf.compat.v1.disable_eager_execution()
-disable_interactive_logging()
 get_custom_objects().update({'squared_clipped_relu': squared_clipped_relu})
 
 graph = tf.Graph()
 with graph.as_default():
     session = tf.compat.v1.Session()
     with session.as_default():
-        model = load_model(r"AI\TrainedModel.keras", custom_objects={'squared_clipped_relu': squared_clipped_relu})
+        # Define your model architecture
+        main_input = tf.keras.Input(shape=(768,), name='main_input')
+        x = tf.keras.layers.Dense(768, kernel_regularizer=tf.keras.regularizers.l2(0.01), activation="squared_clipped_relu")(main_input)
+        x = tf.keras.layers.Dropout(0.5)(x)
+        output = tf.keras.layers.Dense(1)(x)
+        model = tf.keras.Model(inputs=main_input, outputs=output)
+
+        # Load the weights
+        model.load_weights(r'AI\TrainedModel4.keras')
 
 def evaluate(fen):
     binary_board = np.array(fen_to_board(fen))
@@ -60,3 +70,4 @@ def evaluate(fen):
             res = model.predict(binary_board, verbose=1)
 
     return res[0][0]
+

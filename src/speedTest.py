@@ -38,27 +38,40 @@ def fen_to_board(fen):
 
 
 def evaluate(fen):
+    binary_boards = []
+    binary_boards.append(fen_to_board(fen))
+    binary_boards = np.array(binary_boards)
 
-    binary_board = np.array(fen_to_board(fen))
-    binary_board = np.expand_dims(binary_board, axis=0)
-
-    res = model.predict(binary_board, verbose=1)
+    res = model.predict(binary_boards, verbose=1)
     return res
 
 
-
+from tensorflow.keras import regularizers, layers
 import tensorflow as tf
-from tensorflow.keras.models import load_model
 from tensorflow.keras.utils import get_custom_objects
 
-
+tf.compat.v1.disable_eager_execution()
 
 def squared_clipped_relu(x):
     return tf.keras.activations.relu(x, max_value=1)**2
 
-tf.compat.v1.disable_eager_execution()
 get_custom_objects().update({'squared_clipped_relu': squared_clipped_relu})
-model = load_model(r"AI\TrainedModel.keras")
+
+main_input = tf.keras.Input(shape=(768,), name='main_input')
+
+x = layers.Dense(768, kernel_regularizer=regularizers.l2(0.01), activation="squared_clipped_relu")(main_input)
+
+x = layers.Dropout(0.5)(x)
+
+output = layers.Dense(1)(x)
+
+model = tf.keras.Model(inputs=main_input, outputs=output)
+
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.MeanSquaredError(),
+              metrics=['mae'])
+
+model.load_weights(r"AI\TrainedModel3.keras")
 
 
 board = chess.Board()
@@ -68,6 +81,6 @@ from smallModelBot.ZobristHash_s import ZobristHash
 zob = ZobristHash()
 startTime = time.time()
 while time.time()-startTime <10:
-    evaluate(board.fen())
+    print(evaluate("8/8/4k3/8/8/3Q4/3K4/8 w - - 0 1"))
     counter+=1
 print(counter)

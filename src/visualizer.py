@@ -111,8 +111,9 @@ def move():
             move = bot1.choose_move(board)
             print(move)
         else:
+            # move = random.choice(list(board.legal_moves))
             move = bot2.choose_move(board)
-            time.sleep(1)
+            time.sleep(0.5)
         board.push(move)
         
     return ""
@@ -120,7 +121,7 @@ def move():
 @app.route('/reset', methods = ["POST"])
 def reset():
     board.reset()
-    board.set_fen("8/8/4k3/8/8/3Q3q/3K4/8 w - - 0 1")
+    # board.set_fen("8/8/4k3/8/8/3Q3q/3K4/8 w - - 0 1")
     return ""
 
 @app.route('/play', methods = ["GET", "POST"])
