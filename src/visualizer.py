@@ -5,19 +5,21 @@ import random
 import importlib.util
 import requests
 
+
 app = Flask(__name__)
 
-spec1 = importlib.util.spec_from_file_location("bot1", "src/bot1/search.py")
+spec1 = importlib.util.spec_from_file_location("bot1", "src/smallModelBot/search.py")
 bot1_module = importlib.util.module_from_spec(spec1)
 spec1.loader.exec_module(bot1_module)
 bot1 = bot1_module.Bot()
 
-# spec2 = importlib.util.spec_from_file_location("bot2", "src/bot2/search.py")
-# bot2_module = importlib.util.module_from_spec(spec2)
-# spec2.loader.exec_module(bot2_module)
-# bot2 = bot2_module.Bot()
+spec2 = importlib.util.spec_from_file_location("bot2", "src/bot2/search.py")
+bot2_module = importlib.util.module_from_spec(spec2)
+spec2.loader.exec_module(bot2_module)
+bot2 = bot2_module.Bot()
 
 board = chess.Board()
+
 
 @app.route('/', methods =['GET', 'POST'])
 def index():
@@ -109,8 +111,9 @@ def move():
             move = bot1.choose_move(board)
             print(move)
         else:
-            move = random.choice(list(board.legal_moves))
-            time.sleep(1)
+            # move = random.choice(list(board.legal_moves))
+            move = bot2.choose_move(board)
+            time.sleep(0.5)
         board.push(move)
         
     return ""
@@ -118,9 +121,11 @@ def move():
 @app.route('/reset', methods = ["POST"])
 def reset():
     board.reset()
+    # board.set_fen("8/8/4k3/8/8/3Q3q/3K4/8 w - - 0 1")
     return ""
 
 @app.route('/play', methods = ["GET", "POST"])
+
 def play():
     mov = request.form.get('mov')
     # if mov not in list(board.legal_moves):

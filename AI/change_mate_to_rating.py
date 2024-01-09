@@ -19,13 +19,14 @@ def convert_to_rating(moves, is_black):
 
 
 def normalize(score):
-    value = score / 100
-    value/=2
+    value = score / 1
+    return str(value)
+    # value/=2
     
-    if value >= 0:
-        return str(pow(value, 0.6))
-    else:
-        return str(-pow(abs(value), 0.6))
+    # if value >= 0:
+    #     return str(pow(value, 0.6))
+    # else:
+    #     return str(-pow(abs(value), 0.6))
 
 
 
@@ -46,6 +47,7 @@ for line in lines:
     else:
         fen_exists.add(realFen)
     if is_mate(fen_row):
+        continue
         moves = fen_row.split()[-1][1:]  # Extract number of moves from mate symbol
         is_black = fen_row.split()[-1].startswith('-')
         rating = convert_to_rating(moves, is_black)
